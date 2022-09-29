@@ -115,7 +115,7 @@ def run_eda_app():
     df.index = pd.to_datetime(df.index)
     
     stock = st.selectbox(label='select stock to visualize', options=df.columns)
-    kind = st.selectbox(label='select price or normalized returns', options=['price', 'normlized returns'])
+    kind = st.selectbox(label='select price or daily returns', options=['price', 'normlized returns'])
     if kind == 'price':
         fig = px.line(df, 
                       y=stock,
@@ -125,8 +125,8 @@ def run_eda_app():
     else:
         fig = px.line(normalized_returns(df), 
                       y=stock,
-                      labels={stock: 'normalized returns'}, 
-                      title=stock + ': Normalized Returns')
+                      labels={stock: 'daily returns [%]'}, 
+                      title=stock + ': Daily Returns Percentages')
         st.plotly_chart(fig)        
         
 

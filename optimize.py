@@ -65,11 +65,36 @@ def run_optimize_app():
                         y=df_simulation['portfolio return']*100,
                         color=df_simulation['portfolio sharp ratio']*100,
                         labels={'y': 'return [%]', 'x': 'standard deviation', 'color': 'sharp ratio'}, 
-                        title='Portfolio´s Returns and Risks Monte-Carlo Simulation')
+                        title='Portfolio´s Returns, Risks and Sharp-Ratios')
         st.plotly_chart(fig)
 
-        #############################################
-        # find minimal risk i.e. variance portfolio
-        #############################################
+    #############################################
+    # find minimal risk i.e. variance portfolio
+    #############################################
+    if st.button('Find Min-Risk Portfolio'):
+        df_simulation = pd.read_csv(DATAPATH / 'simulation.csv', index_col=0)
+        stock_names = df_simulation.columns[:-3]
         weights_opt = min_variance_portfolio(df_simulation, stock_names)
-        st.write(weights_opt)
+        df_opt = pd.DataFrame(data=weights_opt*100, index=stock_names, columns=['Weighting [%]']).sort_values('Weighting [%]', ascending=False).T
+
+        #####################################
+        # testing the optimal weights!
+        #####################################
+        # import data
+        df = pd.read_csv(DATAPATH / 'data.csv', index_col='Date')
+        df.index = pd.to_datetime(df.index)
+        df_returns = normalized_returns(df)
+        sdev = portfolio_std(df_returns, weights_opt)
+        returns = portfolio_returns(df_returns, weights_opt)
+
+
+        fig = px.scatter(x=df_simulation['portfolio standard dev'], 
+                         y=df_simulation['portfolio return']*100,
+                         color=df_simulation['portfolio sharp ratio']*100,
+                         labels={'y': 'return [%]', 'x': 'standard deviation', 'color': 'sharp ratio'}, 
+                         title='Minimal Risk Portfolio')
+        fig.add_vline(x=sdev, line_width=2, line_dash="dash", line_color="red")
+        fig.add_hline(y=returns*100, line_width=2, line_dash="dash", line_color="green")
+        st.plotly_chart(fig)
+
+        st.write(df_opt)
