@@ -90,7 +90,7 @@ def run_optimize_app():
                     y=df_simulation['portfolio return']*100,
                     color=df_simulation['portfolio sharp ratio']*100,
                     labels={'y': 'return [%]', 'x': 'standard deviation', 'color': 'sharp ratio'}, 
-                    title='Optimized Portfolio with Maximized Return for Maximal Risk')
+                    title='Optimized Portfolio with Maximized Return for Given Risk')
                         
     fig.add_vline(x=selected_maximal_risk, line_width=2, line_color="red", 
                 annotation_text="maximal allowed risk", annotation_font_color='red', annotation_position="bottom right")
@@ -102,7 +102,7 @@ def run_optimize_app():
 
     fig = px.bar(df_opt.T.sort_values('Investment [€]'),
                 orientation='h',
-                height=800,
+                #height=800,
                 labels={"index": "stock", 'value': 'stock investment [€]'},
                 title="Optimal Investment Strategy for Given Risk Investing " + str(investment_sum) + '€.').update_layout(legend={'xanchor':'right', 'yanchor':'bottom'}
                 )

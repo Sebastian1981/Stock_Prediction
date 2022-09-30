@@ -62,14 +62,45 @@ dax_assets = {
                'HelloFresh': 'HFG.DE'
             }
 
+mixed_assets = {
+               'DAX': '^GDAXI',
+               'Eurostoxx': '^STOXX50E',
+               'DowJones': '^DJI',
+               'Nikkei': '^N225',
+               'SP500': '^GSPC',
+               'GOLD': 'GC=F',
+               'Silver': 'SI=F',
+               'Bitcoin': 'BTC-EUR',
+                }
+
+tech_assets = {
+               'Microsoft': 'MSFT',
+               'Tesla': 'TSLA',
+               'Google': 'GOOG',
+               'Apple': 'AAPL',
+               'IBM': 'IBM',
+               'Amazon': 'AMZN',
+               'Samsung': 'SSUN.F',
+               'Intel': 'INTC',
+                }
+
 
 def run_eda_app():
                     
     ########################################
     # select stocks
     ########################################
-    selected_stocks = st.multiselect(label='select from DAX top-40 companies', options=dax_assets.keys(), default=dax_assets.keys())
-    selected_stock_tickers = [dax_assets[stock] for stock in selected_stocks]
+    selected_asset_class = st.selectbox(label='select asset class', options=['tech assets', 'dax top 40', 'mixed assets'])
+    st.write(selected_asset_class)
+    if selected_asset_class == 'dax top 40':
+        selected_stocks = st.multiselect(label='select from DAX top-40 companies', options=dax_assets.keys(), default=dax_assets.keys())
+        selected_stock_tickers = [dax_assets[stock] for stock in selected_stocks]
+    elif selected_asset_class == 'mixed assets':
+        selected_stocks = st.multiselect(label='select from mixed assets', options=mixed_assets.keys(), default=mixed_assets.keys())
+        selected_stock_tickers = [mixed_assets[stock] for stock in selected_stocks]
+    elif selected_asset_class == 'tech assets':
+        selected_stocks = st.multiselect(label='select from tech assets', options=tech_assets.keys(), default=tech_assets.keys())
+        selected_stock_tickers = [tech_assets[stock] for stock in selected_stocks]
 
     ########################################
     # select date range
