@@ -106,7 +106,7 @@ def run_eda_app():
     # select date range
     ########################################
     start_date = datetime(2015,1,1)
-    end_date = datetime(2023,9,28)
+    end_date = datetime(2023,2,28)
     date_selected = st.slider('Select date', min_value=start_date, value=(start_date, end_date), max_value=end_date, format="YY/MM/DD")
     start_date_selected = str(date_selected[0].year)+'-'+str(date_selected[0].month)+'-'+str(date_selected[0].day)
     end_date_selected = str(date_selected[1].year)+'-'+str(date_selected[1].month)+'-'+str(date_selected[1].day)
@@ -146,7 +146,7 @@ def run_eda_app():
     df.index = pd.to_datetime(df.index)
     
     stock = st.selectbox(label='select stock to visualize', options=df.columns)
-    kind = st.selectbox(label='select price or daily returns', options=['price', 'normlized returns'])
+    kind = st.selectbox(label='select price or daily returns', options=['price', 'daily returns'])
     if kind == 'price':
         fig = px.line(df, 
                       y=stock,
