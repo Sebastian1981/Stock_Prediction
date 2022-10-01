@@ -12,6 +12,7 @@ def main():
 
     if choice == 'About this Project':
         st.header('About this Project')
+        st.write('Disclaimer (before moving on): There have been attempts to predict stock prices using time series analysis algorithms, though they still cannot be used to place bets in the real market. This is just a demo app that does not intend in any way to “direct” people into buying stocks. Let’s get started.')
         #run_project_description_app()
 
     elif choice == 'Data Exploration':
