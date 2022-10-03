@@ -121,7 +121,7 @@ def run_eda_app():
                          start=start_date_selected, 
                          end=end_date_selected, 
                          progress=True)
-        data_load_state.text('Loading data from our-world-in-data.org ...done!')
+        data_load_state.text('Loading data from yahoo finance api ...done!')
         # drop columns
         df = df['Close']
         # rename columns
