@@ -7,8 +7,8 @@ import pandas as pd
 from datetime import datetime
 import yfinance as yf
 import plotly.express as px
-from plotly.subplots import make_subplots
-from utils import normalized_returns
+import plotly.graph_objects as go
+from utils import normalized_returns, find_stock_name, make_forecast
 
 
 # set directories
@@ -105,7 +105,7 @@ def run_eda_app():
     ########################################
     # select date range
     ########################################
-    start_date = datetime(2015,1,1)
+    start_date = datetime(2010,1,1)
     end_date = datetime(2023,2,28)
     date_selected = st.slider('Select date', min_value=start_date, value=(start_date, end_date), max_value=end_date, format="YY/MM/DD")
     start_date_selected = str(date_selected[0].year)+'-'+str(date_selected[0].month)+'-'+str(date_selected[0].day)
@@ -124,8 +124,16 @@ def run_eda_app():
         data_load_state.text('Loading data from yahoo finance api ...done!')
         # drop columns
         df = df['Close']
+        # get actual stock names
+        st.write(selected_asset_class)
+        if selected_asset_class == 'dax top 40':
+            stock_names = [find_stock_name(dax_assets, stock_ticker) for stock_ticker in df.columns]
+        elif selected_asset_class == 'mixed assets':
+            stock_names = [find_stock_name(mixed_assets, stock_ticker) for stock_ticker in df.columns]
+        elif selected_asset_class == 'tech assets':
+            stock_names = [find_stock_name(tech_assets, stock_ticker) for stock_ticker in df.columns]
         # rename columns
-        df.columns = selected_stocks
+        df.columns = stock_names
         # make sure the index is datetime format
         df.index = pd.to_datetime(df.index)
         # drop nas
@@ -146,18 +154,39 @@ def run_eda_app():
     df.index = pd.to_datetime(df.index)
     
     stock = st.selectbox(label='select stock to visualize', options=df.columns)
-    kind = st.selectbox(label='select price or daily returns', options=['price', 'daily returns'])
+    kind = st.selectbox(label='select price or daily returns', options=['price', 'price forecast', 'daily returns'])
     if kind == 'price':
         fig = px.line(df, 
                       y=stock,
                       labels={stock: 'price'}, 
                       title=stock + ': Stock Price')
         st.plotly_chart(fig)
-    else:
+    elif kind == 'daily returns':
         fig = px.line(normalized_returns(df), 
                       y=stock,
                       labels={stock: 'daily returns [%]'}, 
                       title=stock + ': Daily Returns Percentages')
+        st.plotly_chart(fig)
+    elif kind == 'price forecast':
+        forecast = make_forecast(df, stock)
+ 
+        # plot the data
+        st.write('Price and One Year Forecast for: '+stock)
+        fig = go.Figure()
+        fig = fig.add_trace(go.Line(x = forecast['ds'],
+                                    y = forecast['y'], 
+                                    name = 'price'))
+        fig = fig.add_trace(go.Line(x = forecast['ds'],
+                                    y = forecast['yhat1'], 
+                                    name = 'forecast'))       
+        st.plotly_chart(fig)
+        # plot components
+        st.write('Trend for: '+stock)
+        fig = go.Figure()
+        fig = fig.add_trace(go.Line(x = forecast['ds'],
+                                    y = forecast['trend'], 
+                                    name = 'trend', 
+                                    line=dict(color='black', width=4)))       
         st.plotly_chart(fig)        
         
 

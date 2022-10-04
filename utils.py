@@ -1,10 +1,18 @@
 import numpy as np
 import pandas as pd
+from neuralprophet import NeuralProphet
+import streamlit as st
 
 
 #####################################################
 # Portfolio Functions
 #####################################################
+
+def find_stock_name(asset_mapping:dict, stock_ticker:str)->str:
+    """return stock or asset name given the stock/asset ticker name"""
+    for key, val in asset_mapping.items():
+        if val == stock_ticker:
+            return key
 
 # normalized daily returns
 def normalized_returns(df):
@@ -22,6 +30,31 @@ def portfolio_sharp_ratio(portfolio_return:float, portfolio_std:float, rfr:float
     """Calculate the sharp ratio for a given portfolio df and a given risk-free-return "rfr"."""
     ntd = 250 #  number of trading days
     return np.divide(portfolio_return - rfr/ntd, portfolio_std) 
+
+
+
+#####################################################
+# Modeling Functions
+#####################################################
+
+@st.cache
+def make_forecast(df, stock):
+    """make a forecast for stock in df"""
+    df_stock = df[[stock]].copy()
+    df_stock = df_stock.rename(columns={stock:'y', 'Date':'ds'})
+    df_stock['ds'] = df_stock.index
+    df_stock = df_stock.reset_index()
+    df_stock = df_stock[['ds','y']]
+
+    params = {"n_forecasts": 1, "n_lags": 0}
+    # train model on all data
+    m = NeuralProphet(**params)
+    # fit model
+    metrics = m.fit(df_stock)
+    # Predictions
+    future = m.make_future_dataframe(df=df_stock, periods=365, n_historic_predictions=len(df_stock)) #we need to specify the number of days in future
+    forecast = m.predict(future)
+    return forecast
 
 
 
