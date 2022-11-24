@@ -84,13 +84,26 @@ tech_assets = {
                'Intel': 'INTC',
                 }
 
+alexa_assets = {
+                'Abbott_Laboratories': 'ABT',
+                'Allianz_SE': 'ALV.DE',
+                'Google': 'GOOG',
+                'Coca_Cola': 'KO',
+                'Colgate_Palmolive': 'CL',
+                'HDFC_Bank': 'HDB',
+                'Internat_Flavors': 'IFF',
+                'Medtronic': 'MDT',
+                'Mondelez': 'MDLZ',
+                'Thermo_Fisher': 'TMO'
+               }
+
 
 def run_eda_app():
                     
     ########################################
     # select stocks
     ########################################
-    selected_asset_class = st.selectbox(label='select asset class', options=['tech assets', 'dax top 40', 'mixed assets'])
+    selected_asset_class = st.selectbox(label='select asset class', options=['tech assets', 'dax top 40', 'mixed assets', 'alexa assets'])
     st.write(selected_asset_class)
     if selected_asset_class == 'dax top 40':
         selected_stocks = st.multiselect(label='select from DAX top-40 companies', options=dax_assets.keys(), default=dax_assets.keys())
@@ -101,6 +114,9 @@ def run_eda_app():
     elif selected_asset_class == 'tech assets':
         selected_stocks = st.multiselect(label='select from tech assets', options=tech_assets.keys(), default=tech_assets.keys())
         selected_stock_tickers = [tech_assets[stock] for stock in selected_stocks]
+    elif selected_asset_class == 'alexa assets':
+        selected_stocks = st.multiselect(label='select from alexa assets', options=alexa_assets.keys(), default=alexa_assets.keys())
+        selected_stock_tickers = [alexa_assets[stock] for stock in selected_stocks]
 
     ########################################
     # select date range
@@ -132,6 +148,8 @@ def run_eda_app():
             stock_names = [find_stock_name(mixed_assets, stock_ticker) for stock_ticker in df.columns]
         elif selected_asset_class == 'tech assets':
             stock_names = [find_stock_name(tech_assets, stock_ticker) for stock_ticker in df.columns]
+        elif selected_asset_class == 'alexa assets':
+            stock_names = [find_stock_name(alexa_assets, stock_ticker) for stock_ticker in df.columns]
         # rename columns
         df.columns = stock_names
         # make sure the index is datetime format
