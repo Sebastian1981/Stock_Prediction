@@ -5,6 +5,8 @@ from optimize import run_optimize_app
 #from about import run_project_description_app
 
 
+st.config.set_option('SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL', True) 
+
 def main():
     st.title('Demo Web-App: Portfolio Optimization using Monte-Carlo Simulations and Machine Learning')
     menu = ["About this Project", "Data Exploration", "Portfolio Optimization"]
