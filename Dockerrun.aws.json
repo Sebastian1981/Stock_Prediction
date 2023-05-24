@@ -1,0 +1,14 @@
+{
+    "AWSEBDockerrunVersion": "1",
+    "Image": {
+      "Name": "63531981/portfolio_optimize:latest",
+      "Update": "true"
+    },
+    "Ports": [
+      {
+        "ContainerPort": "8501",
+        "HostPort": "8501"
+      }
+    ],
+    "Logging": "/var/log/nginx"
+  }
